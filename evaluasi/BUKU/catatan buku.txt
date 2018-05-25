@@ -1,0 +1,54 @@
+#####################################################################################################################
+
+Contoh Trace FIle
+- Pengiriman Packet
+
+s 0.556838879 _28_ AGT  --- 11 cbr 512 [0 0 0 0] ------- [28:0 29:0 32 0] [0] 0 0
+
+- Penerimaan Packet
+
+r 72.042486122 _29_ AGT  --- 633 cbr 532 [13a 1d 4 800] ------- [28:0 29:0 27 29] [71] 6 0
+
+- Komunikasi
+
+r 0.522406133 _17_ RTR  --- 10 message 32 [0 ffffffff 16 800] ------- [22:255 -1:255 32 0] 
+
+###################################################################################################################
+
+FLOWCHART PEMBUATAN SKENARIO GRID
+
+netgenerate --grid --grid.x-number 11 --grid.y-number 11 --grid.x-length 98 --grid.y-length 98 --default.speed=25 --tls.guess=1 --output-file=mapgrid.net.xml
+
+python /usr/share/sumo/tools/randomTrips.py -n mapgrid.net.xml -e 28 -l --trip-attributes="departLane=\"best\" departSpeed=\"max\" departPos=\"random_free\"" -o trips.trips.xml
+
+duarouter -n mapgrid.net.xml -t trips.trips.xml -o route.rou.xml --ignore-errors --
+
+sumo -c script.sumocfg --fcd-output skenario.xml
+
+python /usr/share/sumo/tools/traceExporter.py --fcd-input=skenario.xml --ns2mobility-output=skenario.tcl
+
+python delete.py
+python atur.py
+
+###################################################################################################################
+
+AKTIVITAS2 SIMPAN KECEPATAN
+
+- send trigger update/ incremental
+- update rute
+- proses update
+- forward packet
+- menerima packet
+
+#####################################################################################################################
+
+TAMBAHAN DI DSDV.h
+
+int count_node = 100; // 0 sampai 29
+float *speed_node = (float*) malloc (count_node * sizeof(float));
+double *perup_node = (double*) malloc (count_node * sizeof(double));
+double *minup_node = (double*) malloc (count_node * sizeof(double));
+
+void save(int alamat, double speed, double perup_ori, double minup_ori)
+
+#####################################################################
